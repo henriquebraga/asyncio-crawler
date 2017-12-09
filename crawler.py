@@ -38,7 +38,7 @@ def _create_urls(start_year):
     end  = datetime.date(start_year + 1, 1, 1)
 
     while start < end:
-        url = URL.format(day=str(start).replace('-', '/'))
+        url = URL.format(day=start.strftime('%Y/%m/%d'))
         yield url
         start = start + datetime.timedelta(days=1)
 
