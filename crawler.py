@@ -24,31 +24,23 @@ async def get_daily_balance(url, session):
 
 
 async def get_year_balance(from_year):
-    urls = _create_urls(start_year=from_year)
-
     async with aiohttp.ClientSession() as session:
-
         tasks = [
             asyncio.ensure_future(get_daily_balance(url, session))
-            for url in urls
+            for url in _create_urls(start_year=from_year)
         ]
-
         return await asyncio.gather(*tasks)
 
 
 def _create_urls(start_year):
     urls = []
-    
     start = datetime.date(start_year, 1, 1)
     end  = datetime.date(start_year + 1, 1, 1)
 
     while start < end:
-        urls.append( 
-            URL.format(day=str(start).replace('-', '/'))
-        )
+        url = URL.format(day=str(start).replace('-', '/'))
+        yield url
         start = start + datetime.timedelta(days=1)
-
-    return urls
 
 
 if __name__ == '__main__':
