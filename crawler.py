@@ -1,12 +1,11 @@
-import aiohttp
 import asyncio
-import backoff
-import uvloop
 import datetime
-import async_timeout
-
 from time import time
 
+import aiohttp
+import async_timeout
+import backoff
+import uvloop
 
 BASE_URL = 'https://www.mercadobitcoin.net/api'
 RESOURCE = 'BTC/day-summary/{day}'
@@ -53,4 +52,3 @@ if __name__ == '__main__':
     )
     print('\n\nDone! It took {} seconds'.format(time() - start_time))
     loop.close()
-    
