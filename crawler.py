@@ -7,11 +7,10 @@ import async_timeout
 
 from time import time
 
+
 BASE_URL = 'https://www.mercadobitcoin.net/api'
 RESOURCE = 'BTC/day-summary/{day}'
 URL = '/'.join([BASE_URL,RESOURCE])
-START = datetime.date(2016, 1, 1)
-END = datetime.date(2017, 1, 1)
 
 TIMEOUT_IN_SECONDS = 10
 
@@ -33,7 +32,6 @@ async def get_year_balance(from_year):
 
 
 def _create_urls(start_year):
-    urls = []
     start = datetime.date(start_year, 1, 1)
     end  = datetime.date(start_year + 1, 1, 1)
 
