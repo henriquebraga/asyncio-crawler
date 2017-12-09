@@ -11,34 +11,36 @@ from time import time
 BASE_URL = 'https://www.mercadobitcoin.net/api'
 RESOURCE = 'BTC/day-summary/{day}'
 URL = '/'.join([BASE_URL,RESOURCE])
-
-TIMEOUT_IN_SECONDS = 10
+REQUEST_TIMEOUT_IN_SECONDS = 10
 
 
 @backoff.on_exception(backoff.expo, asyncio.TimeoutError, max_tries=8)
 async def get_daily_balance(url, session):
-    with async_timeout.timeout(TIMEOUT_IN_SECONDS):
+    with async_timeout.timeout(REQUEST_TIMEOUT_IN_SECONDS):
         async with session.get(url) as response:
             print(await response.text())
 
 
 async def get_year_balance(from_year):
     async with aiohttp.ClientSession() as session:
-        tasks = [
+        get_year_balance_tasks = [
             asyncio.ensure_future(get_daily_balance(url, session))
-            for url in _create_urls(start_year=from_year)
+            for url in format_urls_from_year_by_day(year=from_year)
         ]
-        return await asyncio.gather(*tasks)
+        return await asyncio.gather(*get_year_balance_tasks)
 
 
-def _create_urls(start_year):
-    start = datetime.date(start_year, 1, 1)
-    end  = datetime.date(start_year + 1, 1, 1)
+def format_urls_from_year_by_day(year):
+    start = datetime.date(year, 1, 1)
+    end  = datetime.date(year + 1, 1, 1)
 
     while start < end:
-        url = URL.format(day=start.strftime('%Y/%m/%d'))
-        yield url
+        yield format_url_from_day(from_day=start)
         start = start + datetime.timedelta(days=1)
+
+
+def format_url_from_day(from_day):
+    return URL.format(day=from_day.strftime('%Y/%m/%d'))
 
 
 if __name__ == '__main__':
